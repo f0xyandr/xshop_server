@@ -6,21 +6,23 @@ import db from "../db/db";
 const SALT_ROUNDS = 10;
 const JWT_SECRET = process.env.JWT_SECRET || "mysecret";
 
+console.log("AUTH CONTROLLER INITIALIZED");
+
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
 
-  try {
-    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-    const result = await db.query(
-      "INSERT INTO users(username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
-      [username, email, passwordHash],
-    );
+  // try {
+  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+  const result = await db.query(
+    "INSERT INTO users(username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
+    [username, email, passwordHash],
+  );
 
-    res.status(201).json(result.rows[0]);
-  } catch (e: any) {
-    console.error(e);
-    res.status(500).json({ error: e.message });
-  }
+  res.status(201).json(result.rows[0]);
+  // } catch (e: any) {
+  //   console.error(e);
+  //   res.status(500).json({ error: e.message });
+  // }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -67,6 +69,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const getUsers = async (_req: Request, res: Response): Promise<void> => {
+  console.log(">>> getUsers START");
+
   try {
     const result = await db.query("SELECT id, username, email FROM users");
     res.status(200).json(result.rows);
