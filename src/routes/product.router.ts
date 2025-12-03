@@ -6,12 +6,13 @@ import {
   getAllProducts,
   getOneProduct,
   deleteProduct,
+  fetchRandomProducts,
 } from "../controllers/product.controller";
 
 const router = express.Router();
 
 router.post(
-  // Path is {host}/product/product_add
+  // Path is {host}/api/product/product_add
   "/product_add",
   (req: Request, res: Response, next: NextFunction) => {
     console.log("Route hit: /product_add");
@@ -22,7 +23,7 @@ router.post(
 );
 
 router.patch(
-  // Path is {host}/product/product_add
+  // Path is {host}/api/product/product_add
   "/product_upd/:id",
   (req, res, next) => {
     console.log("Route hit: /product_upd");
@@ -33,7 +34,7 @@ router.patch(
 );
 
 router.delete(
-  // Path is {host}/product/product_del
+  // Path is {host}/api/product/product_del
   "/product_del/:id",
   (req, res, next) => {
     console.log("Route hit: /product_del");
@@ -44,7 +45,7 @@ router.delete(
 );
 
 router.get(
-  // Path is {host}/product/get_one_product
+  // Path is {host}/api/product/get_one_product
   "/get_one_product/:id",
   (req, res, next) => {
     console.log("Route hit: /get_one_product");
@@ -55,7 +56,7 @@ router.get(
 );
 
 router.get(
-  // Path is {host}/product/get_all_products
+  // Path is {host}/api/product/get_all_products
   "/get_all_products/",
   (req, res, next) => {
     console.log("Route hit: /get_all_products");
@@ -63,6 +64,17 @@ router.get(
     next();
   },
   getAllProducts,
+);
+
+router.get(
+  //Path is {host}/api/product/fetch_random_products
+  "/fetch_random_products",
+  (req: Request, res: Response, next: NextFunction) => {
+    console.log("Route hit: /fetch_random_products");
+    console.log(`Request body is: ${req.body}`);
+    next();
+  },
+  fetchRandomProducts,
 );
 
 export default router;

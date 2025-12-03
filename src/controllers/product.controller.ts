@@ -106,3 +106,16 @@ export const getOneProduct = async (
     res.status(500).json({ error: e.message });
   }
 };
+
+export const fetchRandomProducts = async (req: Request, res: Response) => {
+  try {
+    const result = await db.query<Product>(
+      "SELECT * FROM products ORDER BY RANDOM() LIMIT 10",
+    );
+    console.log(result.rows);
+    res.status(200).json(result.rows);
+  } catch (e: any) {
+    console.error("Error occurred:", e);
+    res.status(500).json({ error: e.message });
+  }
+};
