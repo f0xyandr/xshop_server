@@ -7,6 +7,8 @@ import {
   getOneProduct,
   deleteProduct,
   fetchRandomProducts,
+  getAllProductsWithCategory,
+  getProductsByIds,
 } from "../controllers/product.controller";
 
 const router = express.Router();
@@ -22,11 +24,21 @@ router.post(
   addProduct,
 );
 
+router.get(
+  "/get_products_by_ids/",
+  (req: Request, res: Response, next: NextFunction) => {
+    console.log("Hit route /cart/get_products_by_ids/");
+    console.log("Request params:", req.body);
+    next();
+  },
+  getProductsByIds,
+);
+
 router.patch(
-  // Path is {host}/api/product/product_add
+  // Path is {host}/api/product/product_upd/:id
   "/product_upd/:id",
   (req, res, next) => {
-    console.log("Route hit: /product_upd");
+    console.log(`Route hit: /product_upd/${req.params}`);
     console.log("Request body:", req.body);
     next();
   },
@@ -53,6 +65,17 @@ router.get(
     next();
   },
   getOneProduct,
+);
+
+router.get(
+  // Path is {host}/api/product/get_products_with_category
+  "/get_products_with_category/",
+  (req, res, next) => {
+    console.log("Route hit: /get_products_with_category");
+    console.log("Request body:", req.body);
+    next();
+  },
+  getAllProductsWithCategory,
 );
 
 router.get(

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cartRouter from "./routes/cart.router";
 import authRouter from "./routes/auth.router";
+import categoryRouter from "./routes/category.router";
 
 import productRouter from "./routes/product.router";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -17,7 +18,8 @@ app.use(express.json());
 app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/auth", authRouter);
-app.get("/api/auth/test", (req, res) => {
+app.use("/api/category", categoryRouter);
+app.get("/test", (req, res) => {
   console.log(">>> TEST ROUTE HIT");
   res.send("ok");
 });

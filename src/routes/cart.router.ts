@@ -4,6 +4,7 @@ import {
   getCartItems,
   deleteCartItem,
   deleteCartItems,
+  updateCartItem,
 } from "../controllers/cart.controller";
 
 const router = express.Router();
@@ -37,10 +38,24 @@ router.post(
   },
   addCartItem,
 );
+// POST {host}/cart/update_cart_item
+router.patch(
+  "/update_cart_item/:id",
+  (
+    req: Request<{}, {}, AddCartItemBody>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    console.log("Hit route /cart/update_cart_item/:id");
+    console.log("Request body:", req.body);
+    next();
+  },
+  updateCartItem,
+);
 
 // GET {host}/cart/get_items/:id
 router.get(
-  "/get_items/",
+  "/get_items/:id",
   (req: Request, res: Response, next: NextFunction) => {
     console.log("Hit route /cart/get_items/:id");
     console.log("Request params:", req.params);
