@@ -12,7 +12,7 @@ const updateCartItem = async (req: Request, res: Response) => {
     const { quantity, user_id } = req.body;
     const { product_id } = req.params;
     const result = await db.query(
-      "UPDATE cart SET quantity = $1 WHERE product_id = $2 AND user_id = $3",
+      "UPDATE cart_items SET quantity = $1 WHERE product_id = $2 AND user_id = $3",
       [quantity, product_id, user_id],
     );
     res.status(201).json(result.rows[0]);
@@ -26,10 +26,10 @@ const addCartItem = async (req: Request, res: Response) => {
 
   try {
     const result = await db.query(
-      `INSERT INTO cart (user_id, product_id, quantity)
+      `INSERT INTO cart_items (user_id, product_id, quantity)
           VALUES ($1, $2, 1)
           ON CONFLICT (user_id, product_id)
-          DO UPDATE SET quantity = cart.quantity + 1
+          DO UPDATE SET quantity = cart_items.quantity + 1
           RETURNING *`,
       [user_id, product_id],
     );
@@ -49,7 +49,7 @@ const getCartItems = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const result = await db.query<CartItem[]>(
-      "SELECT * FROM cart WHERE user_id = $1",
+      "SELECT * FROM cart_items WHERE user_id = $1",
       [id],
     );
     res.status(200).json(result.rows);

@@ -4,25 +4,37 @@ import bcrypt from "bcrypt";
 import db from "../db/db";
 
 const SALT_ROUNDS = 10;
-const JWT_SECRET = process.env.JWT_SECRET || "mysecret";
+const JWT_SECRET: string = process.env.JWT_SECRET ?? (() => { throw new Error('JWT_SECRET is not defined in environment variables'); })();
 
 console.log("AUTH CONTROLLER INITIALIZED");
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
 
-  // try {
-  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-  const result = await db.query(
-    "INSERT INTO users(username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
-    [username, email, passwordHash],
-  );
+  try {
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+    const result = await db.query(
+      "INSERT INTO users(username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
+      [username, email, passwordHash],
+    );
 
-  res.status(201).json(result.rows[0]);
-  // } catch (e: any) {
-  //   console.error(e);
-  //   res.status(500).json({ error: e.message });
-  // }
+    const newUser = result.rows[0];
+
+    // Create token immediately after registration
+    const token = jwt.sign(
+      { id: newUser.id, username: newUser.username, email: newUser.email },
+      JWT_SECRET,
+      { expiresIn: "10h" },
+    );
+
+    res.status(201).json({
+      user: newUser,
+      token: token,
+    });
+  } catch (e: any) {
+    console.error(e);
+    res.status(500).json({ error: e.message });
+  }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {

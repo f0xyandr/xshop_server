@@ -163,13 +163,21 @@ export const fetchRandomProducts = async (
 };
 
 export const getAllProductsWithCategory = async (
-  _req: Request,
+  req: Request,
   res: Response,
 ): Promise<void> => {
-  const { category_id } = _req.body;
+  const category_id = req.query.category_id as string;
+
+  if (!category_id) {
+    res.status(400).json({ error: "category_id query parameter is required" });
+    return;
+  }
+
   try {
     const result = await db.query(
-      "SELECT * FROM products WHERE category_id = $1",
+      `SELECT * FROM products
+       WHERE category_id = $1
+       OR category_id IN (SELECT id FROM categories WHERE parent_id = $1)`,
       [category_id],
     );
     res.status(200).json(result.rows);

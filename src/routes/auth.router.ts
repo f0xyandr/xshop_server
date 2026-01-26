@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { login, register, getUsers } from "../controllers/auth.controller";
+import { verifyToken } from "../middlewares/authMiddleware";
 
 console.log("AUTH ROUTER INITIALIZED");
 
@@ -30,11 +31,7 @@ router.post(
 // GET /auth/getUsers
 router.get(
   "/getUsers",
-  (req: Request, res: Response, next: NextFunction) => {
-    console.log("Route hit: /getUsers");
-    console.log("Request body:", req.body);
-    next();
-  },
+  verifyToken,
   getUsers,
 );
 

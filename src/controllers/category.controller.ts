@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import db from "../db/db";
 
 interface Category {
-  category_id: string;
+  id: number;
   category_name: string;
+  parent_id: number | null;
   created_at: string;
 }
 
@@ -12,7 +13,7 @@ export const getCategories = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const result = await db.query<Category>("SELECT * FROM category");
+    const result = await db.query<Category>("SELECT * FROM categories");
     console.log(result.rows);
     res.status(200).json(result.rows);
   } catch (e) {
@@ -28,12 +29,12 @@ export const addCategory = async (
   console.log("=== addCategory called ===");
   console.log("Request body:", req.body);
 
-  const { category_name } = req.body;
+  const { category_name, parent_id } = req.body;
 
   try {
     const result = await db.query(
-      "INSERT INTO category(category_name) VALUES ($1) RETURNING *",
-      [category_name],
+      "INSERT INTO categories(category_name, parent_id) VALUES ($1, $2) RETURNING *",
+      [category_name, parent_id || null],
     );
 
     console.log("Query executed successfully:", result.rows);
